@@ -1,0 +1,9 @@
+.top{
+    padding-top: 80px;
+}
+.actions-cell {
+    display: flex;
+    justify-content: flex-start; /* Aligne les boutons à gauche horizontalement */
+    align-items: center;         /* Centre les boutons verticalement */
+    gap: 10px;                   /* Espace de 10px entre les boutons */
+  }

@@ -1,0 +1,87 @@
+<div *ngIf="isLoading" class="loader-container">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+<div *ngIf="!isLoading" class="container-fluid top">
+    <h2 class="fw-bold mb-4">Liste des Clients</h2>
+    <div class="d-flex justify-content-end mb-3">
+      <button class="btn btn-primary" (click)="openModal()"><i class="ti ti-plus"></i> Ajouter Client</button>
+    </div>
+  
+    <!-- Client Table -->
+    <div class="card">
+      <div class="card-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Comptes</th>
+              <th>Solde Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let client of clients; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ client.nom }}</td>
+              <td>{{ client.prenom }}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let compte of client.comptes">
+                    RIB: {{ compte.rib }}, Solde: {{ compte.solde  }} TND
+                  </li>
+                </ul>
+              </td>
+              <td>{{ calculateTotalBalance(client.comptes)  }} TND</td>
+              <td >
+                <div class="actions-cell">
+                <button class="btn btn-warning " (click)="openModal(client)"><i class="ti ti-pencil"></i> Edit</button>
+              
+              <button class="btn btn-danger" (click)="deleteClient(client)">
+                <i class="ti ti-trash"></i> Delete
+              </button>
+            </div>
+            </td>
+
+            
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bootstrap Modal -->
+  <div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clientModalLabel">{{ isEditMode ? 'Modifier Client' : 'Ajouter Client' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form -->
+          <form>
+            <div class="mb-3">
+              <label for="nom" class="form-label">Nom</label>
+              <input type="text" class="form-control" id="nom" [(ngModel)]="currentClient.nom" name="nom" />
+            </div>
+            <div class="mb-3">
+              <label for="prenom" class="form-label">Prénom</label>
+              <input type="text" class="form-control" id="prenom" [(ngModel)]="currentClient.prenom" name="prenom" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-primary" (click)="saveClient()">
+            {{ isEditMode ? 'Update' : 'Add' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

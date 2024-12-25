@@ -1,0 +1,66 @@
+<div *ngIf="isLoading" class="loader-container">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+<div *ngIf="!isLoading" class="container-fluid top">
+    <h2 class="fw-bold mb-4">Tableau de Bord </h2>
+    <div class="row">
+        <!-- Chart 1: Number Card - Total Money -->
+<div class="col-md-6 mt-4">
+    <h5 class="text-center">Total des Soldes</h5>
+    <ngx-charts-number-card
+      [view]="[500, 300]"
+      [results]="totalMoneyChartData"
+      [scheme]="colorScheme"
+      [cardColor]="'#f0f0f0'"
+      [bandColor]="'#5AA454'"
+      [textColor]="'#333'">
+    </ngx-charts-number-card>
+  </div>
+
+  
+      <!-- Chart 2: Solde Distribution by Accounts -->
+      <div class="col-md-6">
+        <h5 class="text-center">Répartition des Soldes par Compte</h5>
+        <ngx-charts-pie-chart
+          [view]="[500, 300]"
+          [results]="compteChartData"
+          [scheme]="colorScheme"
+          [labels]="true"
+          [legend]="true">
+        </ngx-charts-pie-chart>
+      </div>
+  
+      <!-- Chart 3: Solde Ranges -->
+      <div class="col-md-6 mt-4">
+        <h5 class="text-center">Répartition des Soldes par Tranches</h5>
+        <ngx-charts-pie-chart
+          [view]="[500, 300]"
+          [results]="soldeRangeChartData"
+          [scheme]="colorScheme"
+          [labels]="true"
+          [legend]="true"
+          [doughnut]="true">
+        </ngx-charts-pie-chart>
+      </div>
+  
+
+        <!-- Chart 4: Total Balance per Client -->
+        <div class="col-md-6">
+            <h5 class="text-center">Solde Total par Client</h5>
+            <ngx-charts-bar-vertical
+              [view]="[500, 300]"
+              [results]="clientChartData"
+              [scheme]="colorScheme"
+              [xAxis]="true"
+              [yAxis]="true"
+              [legend]="false"
+              [showDataLabel]="true">
+            </ngx-charts-bar-vertical>
+          </div>
+  
+  
+    </div>
+  </div>
+  

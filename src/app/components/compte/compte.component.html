@@ -1,0 +1,190 @@
+<div *ngIf="isLoading" class="loader-container">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<div *ngIf="!isLoading" class="container-fluid top">
+  <h2 class="fw-bold mb-4">Liste des Comptes</h2>
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary" (click)="openAddModal()">
+      <i class="ti ti-plus"></i> Ajouter Compte
+    </button>
+  </div>
+
+  <input type="text" class="form-control mb-3" placeholder="Filtrer par nom du client" [(ngModel)]="filter" />
+
+  <div class="card">
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>RIB</th>
+            <th>Nom du Client</th>
+            <th>Solde</th>
+            <th class="justify">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let compte of filteredComptes(); let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ compte.rib }}</td>
+            <td>{{ compte.nomClient }}</td>
+            <td>{{ compte.solde }} TND</td>
+            <td class="actions-cell">
+              <button class="btn btn-warning" (click)="openEditModal(compte)">
+                <i class="ti ti-pencil"></i> Modifier
+              </button>
+              <button class="btn btn-danger" (click)="deleteCompte(compte)">
+                <i class="ti ti-trash"></i> Supprimer
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addCompteModal" tabindex="-1" aria-labelledby="addCompteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCompteModalLabel">Ajouter Compte</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <!-- Radio for selecting client mode -->
+          <div class="mb-3">
+            <label class="form-label">Client</label>
+            <div>
+              <input
+                type="radio"
+                id="existingClient"
+                name="clientMode"
+                value="existing"
+                [(ngModel)]="clientMode"
+                (change)="resetClientSelection()"
+              />
+              <label for="existingClient">Sélectionner un client existant</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                id="newClient"
+                name="clientMode"
+                value="new"
+                [(ngModel)]="clientMode"
+                (change)="resetClientSelection()"
+              />
+              <label for="newClient">Ajouter un nouveau client</label>
+            </div>
+          </div>
+
+          <!-- Select existing client -->
+          <div class="mb-3" *ngIf="clientMode === 'existing'">
+            <label for="existingClientSelect" class="form-label">Sélectionner un client</label>
+            <select
+              id="existingClientSelect"
+              class="form-select"
+              [(ngModel)]="currentCompte.client_id"
+              name="client_id"
+            >
+              <option *ngFor="let client of clients" [value]="client.id">
+                {{ client.nom }} {{ client.prenom }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Add new client -->
+          <div *ngIf="clientMode === 'new'">
+            <div class="mb-3">
+              <label for="newClientNom" class="form-label">Nom du client</label>
+              <input
+                type="text"
+                id="newClientNom"
+                class="form-control"
+                [(ngModel)]="newClient.nom"
+                name="newClientNom"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="newClientPrenom" class="form-label">Prénom du client</label>
+              <input
+                type="text"
+                id="newClientPrenom"
+                class="form-control"
+                [(ngModel)]="newClient.prenom"
+                name="newClientPrenom"
+              />
+            </div>
+          </div>
+
+          <!-- Solde -->
+          <div class="mb-3">
+            <label for="solde" class="form-label">Solde</label>
+            <input
+              type="number"
+              id="solde"
+              class="form-control"
+              [(ngModel)]="currentCompte.solde"
+              name="solde"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="saveCompte()">Ajouter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editCompteModal" tabindex="-1" aria-labelledby="editCompteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCompteModalLabel">Modifier Compte</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <!-- Client Name -->
+          <div class="mb-3">
+            <label for="clientName" class="form-label">Nom du Client</label>
+            <input
+              type="text"
+              id="clientName"
+              class="form-control"
+              [value]="currentCompte.nomClient"
+              readonly
+              disabled
+            />
+          </div>
+
+          <!-- Solde -->
+          <div class="mb-3">
+            <label for="solde" class="form-label">Solde</label>
+            <input
+              type="number"
+              id="solde"
+              class="form-control"
+              [(ngModel)]="currentCompte.solde"
+              name="solde"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="editCompte()">Modifier</button>
+      </div>
+    </div>
+  </div>
+</div>
