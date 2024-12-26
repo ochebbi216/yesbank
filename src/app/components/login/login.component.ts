@@ -11,11 +11,13 @@ import Swal from 'sweetalert2';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  credentials: Login = {  // Assure-toi que cela correspond à l'interface
+  credentials: Login = {  
     username: '',
     password: '',
-    remember: false  // Assure-toi que cette propriété est bien initialisée
+    remember: false  
   };
+  isLoading: boolean = false; 
+
   url: any;
 
   constructor(private authService: AuthService, private router: Router, private actRouter: ActivatedRoute) {
@@ -28,8 +30,10 @@ export class LoginComponent {
   }
 
   login(): void {
+    this.isLoading = true; 
     this.authService.login(this.credentials).subscribe(
       (data) => {
+        this.isLoading = false;
         console.log('Login successful');
         this.authService.setToken(data.accessToken, !!this.credentials.remember);
 
@@ -49,6 +53,7 @@ export class LoginComponent {
         this.router.navigate([this.url]);
       },
       (error) => {
+        this.isLoading = false; 
         console.error('Login failed:', error);
         let errorMessage = 'Une erreur est survenue lors de la connexion.';
         if (error.status === 401) {
