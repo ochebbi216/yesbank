@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -25,16 +25,12 @@ jobs:
         run: |
           npm install
           npm run build --if-present
-          npm run test --if-present
-
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
-
+      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: release.zip
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,20 +46,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7463691DCEF2496FB0A23B80E83F8215 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FBA7302276814D109AFC8ED991A3666C }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_78FEE982CFAD4DA5A174C9D8AF5F9B57 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_94DFBFC04F724315A215385726A360CE }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3F302542B04B48ADA8DA82DE6DD9DB1D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0044E17A5F22414CB58E79321E36B285 }}
 
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
         with:
           app-name: 'yesbank'
           slot-name: 'Production'
